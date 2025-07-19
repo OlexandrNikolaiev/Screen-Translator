@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/logo.png</file>
+        <file>resources/icons/close.png</file>
+        <file>resources/icons/collapse.png</file>
+        <file>resources/icons/settings.png</file>
+        <file>resources/icons/settings_hover.png</file>
+        <file>resources/icons/copy.png</file>
+        <file>resources/icons/translate.png</file>
+        <file>resources/icons/comboboxArrow.png</file>
+    </qresource>
+</RCC>
