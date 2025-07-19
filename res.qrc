@@ -9,5 +9,6 @@
         <file>resources/icons/translate.png</file>
         <file>resources/icons/comboboxArrow.png</file>
         <file>resources/icons/swap.png</file>
+        <file>resources/icons/swap_hover.png</file>
     </qresource>
 </RCC>

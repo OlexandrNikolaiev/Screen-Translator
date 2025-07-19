@@ -25,13 +25,14 @@ MainWindow::MainWindow(QWidget *parent)
         "Hindi","Bengali", "Urdu", "Thai", "Vietnamese", "Indonesian", "Malay", "Filipino", "Swahili", "Zulu"
     };
 
-    TriLabelButton* triBtn = new TriLabelButton(this);
-    //ui->verticalLayout_2->addWidget(triBtn);
-
-    QHBoxLayout* layout = new QHBoxLayout(ui->switchButton);
-    layout->addWidget(triBtn);
-    layout->setContentsMargins(0,0,0,0);
-    ui->switchButton->setLayout(layout);
+    TriLabelButton *triBtn = new TriLabelButton(this);
+    triBtn->setLeftText("Belarussian");
+    triBtn->setRightText("English");
+    triBtn->setPixmap(QPixmap(":/icons/resources/icons/swap.png"));
+    connect(triBtn, &TriLabelButton::clicked, this, [triBtn]() {
+        triBtn->swap();
+    });
+    ui->horizontalLayout_4->addWidget(triBtn);
 
     ui->translateFrom->addItems(languages);
     ui->translateTo->addItems(languages);
@@ -51,7 +52,6 @@ void MainWindow::applyShadowEffect()
     ui->textEdit->setGraphicsEffect(makeShadow());
     ui->textEdit_2->setGraphicsEffect(makeShadow());
 
-    ui->translateFrom->setGraphicsEffect(makeShadow());
     ui->copy_1Button->setGraphicsEffect(makeShadow());
     ui->copy_2Button->setGraphicsEffect(makeShadow());
     ui->translateButton->setGraphicsEffect(makeShadow());

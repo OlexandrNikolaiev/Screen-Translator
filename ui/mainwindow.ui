@@ -47,22 +47,22 @@ QTextEdit {
 }
 
 QComboBox {
-    border: 1px solid rgba(255, 255, 255, 40); /* легкий контур */
+    border: 2px solid rgba(80,80,80, 255); 
     background: transparent;
     color: white;
-    padding-left: 6px;     /* ⬅️ отступ перед текстом */
-    padding-right: 24px;   /* ➡️ запас для стрелки и отступа после неё */
+    padding-left: 6px;     
+    padding-right: 24px;   
     border-radius: 4px;
 }
 
 QComboBox:hover {
-    background-color: rgba(255, 255, 255, 20); /* фон при наведении */
+    background-color: rgba(255, 255, 255, 20);
 }
 
 QComboBox::drop-down {
     border: none;
     background: transparent;
-    width: 18px; /* шире, чтобы была зона отступа справа от стрелки */
+    width: 18px; 
 }
 
 QComboBox::down-arrow {
@@ -121,12 +121,12 @@ QComboBox::down-arrow {
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
           <property name="spacing">
-           <number>0</number>
+           <number>6</number>
           </property>
           <property name="leftMargin">
-           <number>5</number>
+           <number>7</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -138,24 +138,29 @@ QComboBox::down-arrow {
            <number>0</number>
           </property>
           <item>
-           <widget class="QPushButton" name="settingsButton">
-            <property name="minimumSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>9</number>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton
+            <item>
+             <widget class="QPushButton" name="settingsButton">
+              <property name="minimumSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton
 {
 	border:none;
 	image: url(:/icons/resources/icons/settings.png);
@@ -168,20 +173,75 @@ QPushButton:hover
 	image: url(:/icons/resources/icons/settings_hover.png);
 }
 </string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="clearButton">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Calibri</family>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton
+{
+		color: rgb(255, 255, 255);
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(255, 108, 107, 255), stop:1 rgba(234, 100, 100, 255));
+
+		border-radius: 2px;
+        border: 1px solid rgb(234,45,45);
+        padding: 4px;
+}
+
+QPushButton:hover
+{
+		color: rgb(255, 255, 255);
+		
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(255, 76, 75, 255), stop:1 rgba(234, 56, 56, 255));
+		border-radius: 2px;
+        border: 1px solid rgb(234,45,45);
+        padding: 4px;
+}</string>
+              </property>
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>268</width>
+              <width>200</width>
               <height>20</height>
              </size>
             </property>
@@ -226,11 +286,11 @@ QPushButton:hover
                <font>
                 <family>SF Pro Display</family>
                 <pointsize>17</pointsize>
-                <bold>false</bold>
+                <bold>true</bold>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(206,206,206);</string>
+               <string notr="true">color: rgb(255, 255, 255);</string>
               </property>
               <property name="text">
                <string>Screen Translator</string>
@@ -244,9 +304,12 @@ QPushButton:hover
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>268</width>
+              <width>200</width>
               <height>20</height>
              </size>
             </property>
@@ -347,6 +410,9 @@ QPushButton:hover
          <layout class="QGridLayout" name="gridLayout">
           <property name="rightMargin">
            <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
           </property>
           <item row="0" column="3" rowspan="2">
            <widget class="QFrame" name="frame">
@@ -516,60 +582,6 @@ QPushButton:hover
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="clearButton">
-            <property name="minimumSize">
-             <size>
-              <width>70</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Calibri</family>
-              <pointsize>12</pointsize>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton
-{
-		color: rgb(255, 255, 255);
-		
-		
-	
-		
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(255, 108, 107, 255), stop:1 rgba(234, 100, 100, 255));
-
-		border-radius: 2px;
-        border: 1px solid rgb(234,45,45);
-        padding: 4px;
-}
-
-QPushButton:hover
-{
-		color: rgb(255, 255, 255);
-		
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(255, 76, 75, 255), stop:1 rgba(234, 56, 56, 255));
-		border-radius: 2px;
-        border: 1px solid rgb(234,45,45);
-        padding: 4px;
-}</string>
-            </property>
-            <property name="text">
-             <string>Clear</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -578,42 +590,31 @@ QPushButton:hover
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>304</width>
+           <width>400</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="switchButton">
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">border:none;
-</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4"/>
        </item>
        <item row="2" column="2">
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>304</width>
+           <width>350</width>
            <height>20</height>
           </size>
          </property>
@@ -631,6 +632,9 @@ QPushButton:hover
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
           <property name="rightMargin">
            <number>5</number>
           </property>
