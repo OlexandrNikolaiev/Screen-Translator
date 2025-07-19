@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "CustomWidgets/trilabelbutton.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +16,25 @@ MainWindow::MainWindow(QWidget *parent)
     mBorderSize = 10;
 
     applyShadowEffect();
+
+    QStringList languages = {
+        "English", "Russian", "Ukrainian", "Polish", "German", "Belarussian", "Italian", "French", "Spanish",
+        "Portuguese","Dutch",
+        "Swedish", "Norwegian", "Finnish", "Danish", "Czech", "Slovak", "Hungarian", "Romanian", "Greek",
+        "Turkish", "Arabic", "Hebrew", "Chinese (Simplified)", "Chinese (Traditional)", "Japanese", "Korean",
+        "Hindi","Bengali", "Urdu", "Thai", "Vietnamese", "Indonesian", "Malay", "Filipino", "Swahili", "Zulu"
+    };
+
+    TriLabelButton* triBtn = new TriLabelButton(this);
+    //ui->verticalLayout_2->addWidget(triBtn);
+
+    QHBoxLayout* layout = new QHBoxLayout(ui->switchButton);
+    layout->addWidget(triBtn);
+    layout->setContentsMargins(0,0,0,0);
+    ui->switchButton->setLayout(layout);
+
+    ui->translateFrom->addItems(languages);
+    ui->translateTo->addItems(languages);
 }
 
 void MainWindow::applyShadowEffect()
@@ -30,6 +50,14 @@ void MainWindow::applyShadowEffect()
     ui->shadowFrame->setGraphicsEffect(makeShadow());
     ui->textEdit->setGraphicsEffect(makeShadow());
     ui->textEdit_2->setGraphicsEffect(makeShadow());
+
+    ui->translateFrom->setGraphicsEffect(makeShadow());
+    ui->copy_1Button->setGraphicsEffect(makeShadow());
+    ui->copy_2Button->setGraphicsEffect(makeShadow());
+    ui->translateButton->setGraphicsEffect(makeShadow());
+
+    ui->clearButton->setGraphicsEffect(makeShadow());
+
 }
 
 MainWindow::~MainWindow()

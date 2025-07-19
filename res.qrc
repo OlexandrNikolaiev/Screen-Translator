@@ -8,5 +8,6 @@
         <file>resources/icons/copy.png</file>
         <file>resources/icons/translate.png</file>
         <file>resources/icons/comboboxArrow.png</file>
+        <file>resources/icons/swap.png</file>
     </qresource>
 </RCC>

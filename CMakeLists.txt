@@ -19,6 +19,8 @@ qt_add_executable(ScreenTranslator
     ui/CustomWidgets/draggableframe.h ui/CustomWidgets/draggableframe.cpp
     ${PROJECT_RESOURCES}
     ui/Overlay/OverlayWidget.h ui/Overlay/OverlayWidget.cpp
+    ui/CustomWidgets/trilabelbutton.h ui/CustomWidgets/trilabelbutton.cpp ui/CustomWidgets/trilabelbutton.ui
+
 
 )
 
