@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 project(ScreenTranslator LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools Concurrent)
+find_package(qhotkey REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/libs/include)
 link_directories(${CMAKE_SOURCE_DIR}/libs/lib)
@@ -20,10 +21,10 @@ qt_add_executable(ScreenTranslator
     ${PROJECT_RESOURCES}
     ui/Overlay/OverlayWidget.h ui/Overlay/OverlayWidget.cpp
     ui/CustomWidgets/trilabelbutton.h ui/CustomWidgets/trilabelbutton.cpp ui/CustomWidgets/trilabelbutton.ui
-
-
+    src/screenshotSnipper/screenshotsnipper.h src/screenshotSnipper/screenshotsnipper.cpp
+    src/ocr/TesseractOcrEngine.h src/ocr/TesseractOcrEngine.cpp
+    src/ocr/IOcrEngine.h
 )
-
 
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build/6_5_3-Release")
 set(DLL_DIR "${CMAKE_SOURCE_DIR}/libs/dlls")
@@ -36,8 +37,6 @@ add_custom_command(TARGET ScreenTranslator POST_BUILD
     COMMENT "Copying DLLs to output directory"
 )
 
-
-
 #qt_add_translations(
 #    TARGETS ScreenTranslator
 #    TS_FILES ScreenTranslator_en_150.ts
@@ -47,6 +46,8 @@ target_link_libraries(ScreenTranslator
     PRIVATE
         Qt::Core
         Qt::Widgets
+        qhotkey
+        Qt::Concurrent
 
         tesseract55.lib
         leptonica-1.85.0.lib

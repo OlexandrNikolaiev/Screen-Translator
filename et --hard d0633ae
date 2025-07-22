@@ -1,0 +1,30 @@
+[33mcommit d0633ae8343e62d3ef8971ef15647e270e4b68e6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Jeweler228 <sweetkerry26@gmail.com>
+Date:   Sun Jul 20 02:30:13 2025 +0300
+
+    gui is ready
+
+[33mcommit 6e246cf8821be77b6417959efd289b54006b9fb0[m
+Author: Jeweler228 <sweetkerry26@gmail.com>
+Date:   Sat Jul 19 23:42:21 2025 +0300
+
+    before changing switch button
+
+[33mcommit d367b0d556a967a5759e08cefa62b0a033883bcf[m
+Merge: 4a43774 d701743
+Author: Jeweler228 <sweetkerry26@gmail.com>
+Date:   Sat Jul 19 04:31:41 2025 +0300
+
+    first commit
+
+[33mcommit 4a437741aff734df811f4eb260d9058003b1518e[m
+Author: Jeweler228 <sweetkerry26@gmail.com>
+Date:   Sat Jul 19 04:30:26 2025 +0300
+
+    first commit
+
+[33mcommit d70174371483f568350b593aeb07774eb132e9d3[m
+Author: Jeweler228 <76923979+OlexandrNikolaiev@users.noreply.github.com>
+Date:   Sat Jul 19 04:25:51 2025 +0300
+
+    Initial commit
