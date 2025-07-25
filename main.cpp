@@ -15,27 +15,21 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale : uiLanguages) {
-        const QString baseName = "ScreenTranslator_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
-            break;
-        }
+    MainWindow q;
+    if (!q.isVisible()) {
+        q.show();
     }
 
     TesseractOcrEngine ocr;
 
-    QHotkey *hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a);
+    QHotkey* hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a);
     QObject::connect(hotkey, &QHotkey::activated, [&]() {
-        QScreen *screen = QGuiApplication::primaryScreen();
+        QScreen* screen = QGuiApplication::primaryScreen();
         if (!screen) return;
 
         QPixmap screenshot = screen->grabWindow(0);
 
-        ScreenshotSnipper *overlay = new ScreenshotSnipper(screenshot);
+        ScreenshotSnipper* overlay = new ScreenshotSnipper(screenshot);
         overlay->show();
 
         QObject::connect(overlay, &ScreenshotSnipper::selectedArea, [&](const QPixmap &cropped) {
@@ -46,11 +40,12 @@ int main(int argc, char *argv[])
             });
 
             auto watcher = new QFutureWatcher<QString>(overlay);
-            QObject::connect(watcher, &QFutureWatcher<QString>::finished, [watcher]() {
+            QObject::connect(watcher, &QFutureWatcher<QString>::finished, [watcher, &q]() {
                 QString result = watcher->result();
 
                 if (!result.isEmpty()) {
                     qDebug() << "Recognized text:\n" << result;
+
                 }
                 else {
                     qDebug() << "Couldn't recognize the text.";
@@ -64,3 +59,4 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(true);
     return a.exec();
 }
+

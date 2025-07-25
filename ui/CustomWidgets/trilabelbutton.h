@@ -37,6 +37,9 @@ private:
     QLabel *rightLabel;
     QHBoxLayout *layout;
 
+    QPixmap normalIcon;
+    QPixmap hoverIcon;
+
     bool hovered = false;
 };
 

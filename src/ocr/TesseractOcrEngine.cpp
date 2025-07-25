@@ -5,7 +5,7 @@
 TesseractOcrEngine::TesseractOcrEngine()
 {
     tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-    if (api->Init("assets\\tessdata\\", "eng+rus+ukr")) {
+    if (api->Init("assets\\tessdata\\", "eng")) {
         qWarning() << "Error while initializing Tesseract";
         delete api;
         _ocrApi = nullptr;

@@ -8,11 +8,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     setAttribute(Qt::WA_TranslucentBackground);
 
-
     connect(ui->closeButton, &QPushButton::clicked, this, &MainWindow::closeWindow);
+    connect(ui->collapseButton, &QPushButton::clicked, this, &MainWindow::collapse);
     mBorderSize = 10;
 
     applyShadowEffect();
@@ -57,7 +58,6 @@ void MainWindow::applyShadowEffect()
     ui->translateButton->setGraphicsEffect(makeShadow());
 
     ui->clearButton->setGraphicsEffect(makeShadow());
-
 }
 
 MainWindow::~MainWindow()
@@ -110,6 +110,28 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, qint64 
     }
 
     return QWidget::nativeEvent(eventType, message, result);
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    QMainWindow::changeEvent(event);
+
+    if (event->type() == QEvent::ActivationChange) {
+        if (!this->isActiveWindow()) {
+#ifdef Q_OS_WIN
+            HWND hwnd = reinterpret_cast<HWND>(this->winId());
+            SetWindowPos(hwnd,
+                         HWND_NOTOPMOST,
+                         0, 0, 0, 0,
+                         SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+#endif
+        }
+    }
+}
+
+void MainWindow::collapse()
+{
+    this->collapse();
 }
 
 

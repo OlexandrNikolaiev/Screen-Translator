@@ -18,6 +18,10 @@ TriLabelButton::TriLabelButton(QWidget *parent)
     leftLabel = new QLabel(this);
     iconLabel = new QLabel(this);
     rightLabel = new QLabel(this);
+    normalIcon = QPixmap(":/icons/resources/icons/swap.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    hoverIcon  = QPixmap(":/icons/resources/icons/swap_hover.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    iconLabel->setPixmap(normalIcon);
+
 
     leftLabel->setFont(font);
     rightLabel->setFont(font);
@@ -39,9 +43,6 @@ TriLabelButton::TriLabelButton(QWidget *parent)
     grid->setColumnStretch(2, 1);
 
     setLayout(grid);
-
-
-
 }
 
 void TriLabelButton::setLeftText(const QString &text) {
@@ -65,12 +66,14 @@ void TriLabelButton::swap()
 
 void TriLabelButton::enterEvent(QEnterEvent *event) {
     hovered = true;
+    iconLabel->setPixmap(hoverIcon);
     update();
     QWidget::enterEvent(event);
 }
 
 void TriLabelButton::leaveEvent(QEvent *event) {
     hovered = false;
+    iconLabel->setPixmap(normalIcon);
     update();
     QWidget::leaveEvent(event);
 }
@@ -84,23 +87,11 @@ void TriLabelButton::mousePressEvent(QMouseEvent *event) {
 void TriLabelButton::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-
-    QColor bg;
-    QPixmap icon;
-    if (hovered)
-    {
-        icon = QPixmap(":/icons/resources/icons/swap_hover.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        bg = QColor(60,60,60,0);
-    } else {
-        icon = QPixmap(":/icons/resources/icons/swap.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        bg = QColor(60, 60, 60, 0);
-    }
-
-    iconLabel->setPixmap(icon);
+    QColor bg = hovered ? QColor(60,60,60,0) : QColor(60,60,60,0);
     painter.setBrush(bg);
     painter.setPen(Qt::NoPen);
     painter.drawRoundedRect(rect(), 3, 3);
-
     QWidget::paintEvent(event);
 }
+
 

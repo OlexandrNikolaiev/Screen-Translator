@@ -24,6 +24,7 @@ qt_add_executable(ScreenTranslator
     src/screenshotSnipper/screenshotsnipper.h src/screenshotSnipper/screenshotsnipper.cpp
     src/ocr/TesseractOcrEngine.h src/ocr/TesseractOcrEngine.cpp
     src/ocr/IOcrEngine.h
+    src/translator/ITranslatorAPI.h
 )
 
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build/6_5_3-Release")

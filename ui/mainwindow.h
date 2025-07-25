@@ -30,8 +30,11 @@ public:
 
 protected:
     bool nativeEvent(const QByteArray &eventType, void *message, qint64 *result) override;
+    void changeEvent(QEvent* event) override;
 
 private:
+    void collapse();
+
     Ui::MainWindow *ui;
     int mBorderSize;
     OverlayWidget *overlay;
