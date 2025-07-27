@@ -131,7 +131,7 @@ void MainWindow::changeEvent(QEvent *event)
 
 void MainWindow::collapse()
 {
-    this->collapse();
+    this->showMinimized();
 }
 
 

@@ -1,6 +1,7 @@
 #include "ui/mainwindow.h"
 
 #include "src/screenshotSnipper/screenshotsnipper.h"
+#include "ui/Overlay/OverlayWidget.h"
 #include "src/ocr/TesseractOcrEngine.h"
 
 #include <QApplication>
@@ -16,9 +17,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow q;
-    if (!q.isVisible()) {
-        q.show();
-    }
 
     TesseractOcrEngine ocr;
 
@@ -29,34 +27,38 @@ int main(int argc, char *argv[])
 
         QPixmap screenshot = screen->grabWindow(0);
 
-        ScreenshotSnipper* overlay = new ScreenshotSnipper(screenshot);
+        ScreenshotSnipper* snipper = new ScreenshotSnipper(screenshot);
+        OverlayWidget* overlay = new OverlayWidget(screenshot, snipper);
         overlay->show();
+        snipper->setParent(overlay);
+        snipper->resize(overlay->size());
+        snipper->show();
 
-        QObject::connect(overlay, &ScreenshotSnipper::selectedArea, [&](const QPixmap &cropped) {
+        QObject::connect(snipper, &ScreenshotSnipper::selectedArea, [&, overlay](const QPixmap &cropped) {
             QApplication::clipboard()->setPixmap(cropped);
-            // async
+            overlay->close();
+
             auto future = QtConcurrent::run([&ocr]() {
                 return ocr.recognizeTextFromClipboard();
             });
 
-            auto watcher = new QFutureWatcher<QString>(overlay);
+            auto watcher = new QFutureWatcher<QString>();
             QObject::connect(watcher, &QFutureWatcher<QString>::finished, [watcher, &q]() {
                 QString result = watcher->result();
-
                 if (!result.isEmpty()) {
                     qDebug() << "Recognized text:\n" << result;
-
-                }
-                else {
-                    qDebug() << "Couldn't recognize the text.";
+                    q.show();
+                } else {
+                    qDebug() << "No text recognized.";
                 }
                 watcher->deleteLater();
             });
+
             watcher->setFuture(future);
         });
     });
 
-    a.setQuitOnLastWindowClosed(true);
+    a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }
 
