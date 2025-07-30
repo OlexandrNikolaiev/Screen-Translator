@@ -3,6 +3,8 @@
 #include "src/screenshotSnipper/screenshotsnipper.h"
 #include "ui/Overlay/OverlayWidget.h"
 #include "src/ocr/TesseractOcrEngine.h"
+#include "src/translator/geminitranslator.h"
+#include "src/utils/SecretManager/secretmanager.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -20,6 +22,13 @@ int main(int argc, char *argv[])
 
     TesseractOcrEngine ocr;
 
+    SecretManager secrets;
+
+    QString geminiAPI = secrets.getApiKey("GEMINI");
+
+    auto translator = new GeminiClient(geminiAPI, &a); //test
+    QObject::connect(translator, &GeminiClient::translated, &q, &MainWindow::setTargetText);
+
     QHotkey* hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a);
     QObject::connect(hotkey, &QHotkey::activated, [&]() {
         QScreen* screen = QGuiApplication::primaryScreen();
@@ -29,6 +38,7 @@ int main(int argc, char *argv[])
 
         ScreenshotSnipper* snipper = new ScreenshotSnipper(screenshot);
         OverlayWidget* overlay = new OverlayWidget(screenshot, snipper);
+        QObject::connect(snipper, &ScreenshotSnipper::closeOverlay, overlay, &OverlayWidget::close);
         overlay->show();
         snipper->setParent(overlay);
         snipper->resize(overlay->size());
@@ -43,11 +53,16 @@ int main(int argc, char *argv[])
             });
 
             auto watcher = new QFutureWatcher<QString>();
-            QObject::connect(watcher, &QFutureWatcher<QString>::finished, [watcher, &q]() {
+            QObject::connect(watcher, &QFutureWatcher<QString>::finished, [watcher, &q, translator]() {
                 QString result = watcher->result();
                 if (!result.isEmpty()) {
                     qDebug() << "Recognized text:\n" << result;
+                    q.setSourceText(result);
+                    translator->translate(result, "en", "rus");
                     q.show();
+                    q.raise();
+                    q.activateWindow();
+                    q.setFocus();
                 } else {
                     qDebug() << "No text recognized.";
                 }

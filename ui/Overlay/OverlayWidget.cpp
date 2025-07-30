@@ -15,6 +15,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
         auto kbStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
         if (kbStruct && kbStruct->vkCode == VK_ESCAPE) {
             if (g_kbHook) {
+                qDebug()<<"VK_ESCAPE";
                 // ???
                 UnhookWindowsHookEx(g_kbHook);
                 g_kbHook = nullptr;
@@ -31,7 +32,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 OverlayWidget::OverlayWidget(const QPixmap &screenshot, ScreenshotSnipper* snipper)
     : QWidget(nullptr), background(screenshot), _snipper(snipper)
 {
-    qDebug()<<"overlay";
+    qDebug()<<"overlay constructor";
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
     setWindowState(Qt::WindowFullScreen);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -59,6 +60,7 @@ OverlayWidget::~OverlayWidget()
         g_kbHook = nullptr;
     }
 #endif
+    qDebug()<<"overlay destroyed";
 }
 
 qreal OverlayWidget::vignetteStrength() const {
@@ -105,11 +107,13 @@ void OverlayWidget::paintEvent(QPaintEvent *)
     }
 }
 
-void OverlayWidget::keyPressEvent(QKeyEvent *event)
+void OverlayWidget::keyPressEvent(QKeyEvent *event) // snipper will be destroyed
 {
     if (event->key() == Qt::Key_Escape) {
+        qDebug()<<"OverlayWidget ESC pressed";
         close();
     } else {
+        qDebug()<<"OverlayWidget ESC pressed2";
         QWidget::keyPressEvent(event);
     }
 }

@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include "CustomWidgets/trilabelbutton.h"
+#include <QClipboard>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->closeButton, &QPushButton::clicked, this, &MainWindow::closeWindow);
     connect(ui->collapseButton, &QPushButton::clicked, this, &MainWindow::collapse);
+    connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::clear);
     mBorderSize = 10;
 
     applyShadowEffect();
@@ -37,6 +40,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->translateFrom->addItems(languages);
     ui->translateTo->addItems(languages);
+
+    connect(ui->copy_1Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
+    connect(ui->copy_2Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
+
+
 }
 
 void MainWindow::applyShadowEffect()
@@ -44,7 +52,7 @@ void MainWindow::applyShadowEffect()
     auto makeShadow = [&]() {
         auto *shadow = new QGraphicsDropShadowEffect(this);
         shadow->setBlurRadius(9);
-        shadow->setOffset(1);
+        shadow->setOffset(0);
         shadow->setColor(QColor(0, 0, 0, 255));
         return shadow;
     };
@@ -69,6 +77,17 @@ void MainWindow::closeWindow()
 {
     this->close();
 }
+
+void MainWindow::setSourceText(QString text)
+{
+    ui->textEdit->setText(text);
+}
+
+void MainWindow::setTargetText(QString text)
+{
+    ui->textEdit_2->setText(text);
+}
+
 
 bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, qint64 *result)
 {
@@ -129,9 +148,32 @@ void MainWindow::changeEvent(QEvent *event)
     }
 }
 
+void MainWindow::copyFromTextEdit()
+{
+    QString text;
+
+    if (sender() == ui->copy_1Button) {
+        text = ui->textEdit->toPlainText();
+    } else if (sender() == ui->copy_2Button) {
+        text = ui->textEdit_2->toPlainText();
+    }
+
+    if (text.endsWith('\n'))
+        text.chop(1);
+
+    QApplication::clipboard()->setText(text);
+}
+
+
 void MainWindow::collapse()
 {
     this->showMinimized();
+}
+
+void MainWindow::clear()
+{
+    ui->textEdit->clear();
+    ui->textEdit_2->clear();
 }
 
 

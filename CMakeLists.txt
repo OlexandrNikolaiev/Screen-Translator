@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(ScreenTranslator LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools Concurrent)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools Concurrent Network)
 find_package(qhotkey REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/libs/include)
@@ -25,10 +25,17 @@ qt_add_executable(ScreenTranslator
     src/ocr/TesseractOcrEngine.h src/ocr/TesseractOcrEngine.cpp
     src/ocr/IOcrEngine.h
     src/translator/ITranslatorAPI.h
+    src/translator/geminitranslator.h src/translator/geminitranslator.cpp
+    src/translator/prompt.h
+    src/utils/SecretManager/secretmanager.h src/utils/SecretManager/secretmanager.cpp
+
+
 )
 
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build/6_5_3-Release")
 set(DLL_DIR "${CMAKE_SOURCE_DIR}/libs/dlls")
+set(CONFIG_DIR "${BUILD_DIR}/config")
+set(SECRETS_FILE "${CMAKE_SOURCE_DIR}/config/secrets.ini")
 file(GLOB DLL_FILES "${DLL_DIR}/*.dll")
 
 add_custom_command(TARGET ScreenTranslator POST_BUILD
@@ -36,6 +43,10 @@ add_custom_command(TARGET ScreenTranslator POST_BUILD
         ${DLL_FILES}
         ${BUILD_DIR}
     COMMENT "Copying DLLs to output directory"
+
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CONFIG_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SECRETS_FILE}" "${CONFIG_DIR}/secrets.ini"
+    COMMENT "Creating config directory and copying secrets.ini"
 )
 
 #qt_add_translations(
@@ -49,6 +60,7 @@ target_link_libraries(ScreenTranslator
         Qt::Widgets
         qhotkey
         Qt::Concurrent
+        Qt::Network
 
         tesseract55.lib
         leptonica-1.85.0.lib

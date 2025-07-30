@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QRect>
 #include <QPoint>
+#include <QPushButton>
 
 class ScreenshotSnipper : public QWidget {
     Q_OBJECT
@@ -18,18 +19,24 @@ public:
 
 signals:
     void selectedArea(const QPixmap &cropped);
+    void closeOverlay();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QPixmap screenshot;
     QRect selectionRect;
     bool selecting = false;
     QPoint startPoint;
+
+    QPushButton* saveButton = nullptr;
+    QPushButton* retryButton = nullptr;
+    QPushButton* cancelButton = nullptr;
+    bool canSelect = true;
+
 };
 
 #endif // SCREENSHOTSNIPPER_H

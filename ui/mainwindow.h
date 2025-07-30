@@ -7,9 +7,9 @@
 #include <QGraphicsDropShadowEffect>
 #include <windows.h>
 #include <windowsx.h>
-#include "Overlay/OverlayWidget.h"
 #include <dwmapi.h>
 #include <QPainter>
+#include <QTextEdit>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,21 +23,28 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    void applyShadowEffect();
     ~MainWindow();
+    void applyShadowEffect();
     void closeWindow();
-    OverlayWidget* getOverlay() const;
+
+    void setSourceText(QString text);
+    void setTargetText(QString text);
+
 
 protected:
     bool nativeEvent(const QByteArray &eventType, void *message, qint64 *result) override;
     void changeEvent(QEvent* event) override;
 
+private slots:
+    void copyFromTextEdit();
+
 private:
     void collapse();
+    void clear();
 
     Ui::MainWindow *ui;
     int mBorderSize;
-    OverlayWidget *overlay;
+
 
 };
 
