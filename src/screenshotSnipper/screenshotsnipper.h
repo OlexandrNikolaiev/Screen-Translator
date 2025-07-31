@@ -6,6 +6,7 @@
 #include <QRect>
 #include <QPoint>
 #include <QPushButton>
+#include "../../ui/CustomWidgets/decisionpanel.h"
 
 class ScreenshotSnipper : public QWidget {
     Q_OBJECT
@@ -32,9 +33,8 @@ private:
     bool selecting = false;
     QPoint startPoint;
 
-    QPushButton* saveButton = nullptr;
-    QPushButton* retryButton = nullptr;
-    QPushButton* cancelButton = nullptr;
+    DecisionPanel* decisionPanel = nullptr;
+
     bool canSelect = true;
 
 };

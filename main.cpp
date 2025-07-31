@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
         ScreenshotSnipper* snipper = new ScreenshotSnipper(screenshot);
         OverlayWidget* overlay = new OverlayWidget(screenshot, snipper);
-        QObject::connect(snipper, &ScreenshotSnipper::closeOverlay, overlay, &OverlayWidget::close);
+        QObject::connect(snipper, &ScreenshotSnipper::closeOverlay, overlay, &OverlayWidget::smoothClose);
         overlay->show();
         snipper->setParent(overlay);
         snipper->resize(overlay->size());

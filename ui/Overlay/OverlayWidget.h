@@ -24,6 +24,9 @@ protected:
     void paintEvent(QPaintEvent *) override;
     void keyPressEvent(QKeyEvent* event) override;
 
+public slots:
+    void smoothClose();
+
 private:
     qreal m_vignetteStrength = -2.0;
     QPixmap background;

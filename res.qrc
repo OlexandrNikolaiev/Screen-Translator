@@ -10,5 +10,9 @@
         <file>resources/icons/comboboxArrow.png</file>
         <file>resources/icons/swap.png</file>
         <file>resources/icons/swap_hover.png</file>
+        <file>resources/icons/ok.png</file>
+        <file>resources/icons/ok_hover.png</file>
+        <file>resources/icons/cancel.png</file>
+        <file>resources/icons/retry.png</file>
     </qresource>
 </RCC>

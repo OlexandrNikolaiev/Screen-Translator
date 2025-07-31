@@ -28,6 +28,7 @@ qt_add_executable(ScreenTranslator
     src/translator/geminitranslator.h src/translator/geminitranslator.cpp
     src/translator/prompt.h
     src/utils/SecretManager/secretmanager.h src/utils/SecretManager/secretmanager.cpp
+    ui/CustomWidgets/decisionpanel.h ui/CustomWidgets/decisionpanel.cpp ui/CustomWidgets/decisionpanel.ui
 
 
 )

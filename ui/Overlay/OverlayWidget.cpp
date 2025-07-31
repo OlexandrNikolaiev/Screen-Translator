@@ -107,13 +107,30 @@ void OverlayWidget::paintEvent(QPaintEvent *)
     }
 }
 
-void OverlayWidget::keyPressEvent(QKeyEvent *event) // snipper will be destroyed
+void OverlayWidget::smoothClose() // todo: close snipper before overlay
+{
+    QPropertyAnimation *anim = new QPropertyAnimation(this, "vignetteStrength");
+    anim->setDuration(100);
+    anim->setStartValue(m_vignetteStrength);
+    anim->setEndValue(0.0);
+
+    connect(anim, &QPropertyAnimation::finished, this, [this]() {
+        QWidget::close();
+        deleteLater();
+    });
+
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void OverlayWidget::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         qDebug()<<"OverlayWidget ESC pressed";
-        close();
+        smoothClose();
     } else {
         qDebug()<<"OverlayWidget ESC pressed2";
         QWidget::keyPressEvent(event);
     }
 }
+
+

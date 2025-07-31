@@ -25,11 +25,24 @@ bool ScreenshotSnipper::isSelectingNow() {
 }
 
 void ScreenshotSnipper::mousePressEvent(QMouseEvent *event) {
-    if (!canSelect) return;
+    // if (!canSelect) {
+    //     selectionRect = QRect();
+    //     canSelect = true;
+    //     decisionPanel->deleteLater();
+    //     decisionPanel = nullptr;
+    //     update();
+    //     return;
+    // }
+
+    if (!canSelect) {
+        emit closeOverlay();
+    }
+
     if (event->button() == Qt::LeftButton) {
         selecting = true;
         startPoint = event->pos();
         selectionRect = QRect(startPoint, startPoint);
+        qDebug()<<"1";
         update();
     }
 }
@@ -49,78 +62,81 @@ void ScreenshotSnipper::mouseReleaseEvent(QMouseEvent *event) {
         canSelect = false;
 
         selectionRect = QRect(startPoint, event->pos()).normalized();
+
+        if (selectionRect.width() == 1 || selectionRect.height() == 1) {
+            // selectionRect = QRect();
+            // canSelect = true;
+            // update();
+            emit closeOverlay();
+            return;
+        }
+
         QPixmap cropped = screenshot.copy(selectionRect);
         QApplication::clipboard()->setPixmap(cropped);
 
-        if (saveButton) { saveButton->deleteLater(); saveButton = nullptr; }
-        if (retryButton) { retryButton->deleteLater(); retryButton = nullptr; }
-        if (cancelButton) { cancelButton->deleteLater(); cancelButton = nullptr; }
+        if (decisionPanel) {
+            decisionPanel->deleteLater();
+            decisionPanel = nullptr;
+        }
 
-        saveButton = new QPushButton("Save Area", this);
-        retryButton = new QPushButton("Retry", this);
-        cancelButton = new QPushButton("Cancel", this);
+        decisionPanel = new DecisionPanel(this);
+        decisionPanel->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 
-        saveButton->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
-        retryButton->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
-        cancelButton->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
-
-        saveButton->adjustSize();
-        retryButton->adjustSize();
-        cancelButton->adjustSize();
-
-        QPoint basePos = selectionRect.bottomLeft();
+        QPoint basePosX1 = selectionRect.bottomLeft();
+        QPoint basePosX2 = selectionRect.bottomRight();
+        QPoint basePos = (basePosX2 + basePosX1) / 2;
         QPoint globalBasePos = this->mapToGlobal(basePos);
-        QRect screenRect = QGuiApplication::primaryScreen()->availableGeometry();
+        QRect screenRect = QGuiApplication::primaryScreen()->geometry();
 
-        int spacing = 1;
-        int totalWidth = saveButton->width() + retryButton->width() + cancelButton->width() + spacing * 2;
 
-        int startX = globalBasePos.x();
-        if (startX + totalWidth > screenRect.right()) {
-            startX = screenRect.right() - totalWidth - 5;
+        int panelWidth = decisionPanel->width();
+        int panelHeight = decisionPanel->height();
+
+        qDebug()<<"screenRect.bottom() = " << screenRect.bottom();
+
+        int startX = globalBasePos.x() - panelWidth / 2;
+        int startY = globalBasePos.y()+4;
+
+        qDebug()<<"startY = " << startY;
+
+        if (startX + panelWidth > screenRect.right()) {
+            startX = screenRect.right() - panelWidth - 5;
+        } else if (startX < screenRect.left()) {
+            startX = screenRect.left() + 5;
         }
 
-        int maxHeight = std::max({saveButton->height(), retryButton->height(), cancelButton->height()});
-        int y = globalBasePos.y();
-        if (y + maxHeight > screenRect.bottom()) {
-            y -= maxHeight;
+        if (startY + panelHeight > screenRect.bottom()) {
+            startY -= panelHeight+5;
         }
 
-        saveButton->move(this->mapFromGlobal(QPoint(startX, y)));
-        retryButton->move(this->mapFromGlobal(QPoint(startX + saveButton->width() + spacing, y)));
-        cancelButton->move(this->mapFromGlobal(QPoint(startX + saveButton->width() + spacing + retryButton->width() + spacing, y)));
+        decisionPanel->move(this->mapFromGlobal(QPoint(startX, startY)));
 
-        connect(saveButton, &QPushButton::clicked, this, [this, cropped]() {
+        connect(decisionPanel, &DecisionPanel::confirm, this, [this, cropped]() {
             emit selectedArea(cropped);
             this->close();
         });
 
-        connect(retryButton, &QPushButton::clicked, this, [this]() {
-            if (saveButton) { saveButton->deleteLater(); saveButton = nullptr; }
-            if (retryButton) { retryButton->deleteLater(); retryButton = nullptr; }
-            if (cancelButton) { cancelButton->deleteLater(); cancelButton = nullptr; }
+        connect(decisionPanel, &DecisionPanel::retry, this, [this]() {
+            if (decisionPanel) {
+                decisionPanel->deleteLater();
+                decisionPanel = nullptr;
+            }
 
             selectionRect = QRect();
             canSelect = true;
             update();
         });
 
-        connect(cancelButton, &QPushButton::clicked, this, [this]() {
-            qDebug()<<"123";
+        connect(decisionPanel, &DecisionPanel::cancel, this, [this]() {
             emit closeOverlay();
-            close();
+            this->close();
         });
 
-        saveButton->show();
-        retryButton->show();
-        cancelButton->show();
-
-        saveButton->raise();
-        retryButton->raise();
-        cancelButton->raise();
-
-        saveButton->setFocus();
+        decisionPanel->show();
+        decisionPanel->raise();
+        decisionPanel->setFocus();
     }
 }
+
 
 
