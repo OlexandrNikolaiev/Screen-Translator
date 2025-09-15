@@ -12,7 +12,7 @@ qt_standard_project_setup()
 qt6_add_resources(PROJECT_RESOURCES res.qrc)
 qt_add_executable(ScreenTranslator
     WIN32 MACOSX_BUNDLE
-    app.rc
+    #app.rc
     main.cpp
     ui/mainwindow.cpp
     ui/mainwindow.h
@@ -29,6 +29,8 @@ qt_add_executable(ScreenTranslator
     src/translator/prompt.h
     src/utils/SecretManager/secretmanager.h src/utils/SecretManager/secretmanager.cpp
     ui/CustomWidgets/decisionpanel.h ui/CustomWidgets/decisionpanel.cpp ui/CustomWidgets/decisionpanel.ui
+    src/utils/enums/enums.h
+    ui/settings.ui
 
 
 )

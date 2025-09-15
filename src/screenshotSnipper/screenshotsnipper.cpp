@@ -25,15 +25,6 @@ bool ScreenshotSnipper::isSelectingNow() {
 }
 
 void ScreenshotSnipper::mousePressEvent(QMouseEvent *event) {
-    // if (!canSelect) {
-    //     selectionRect = QRect();
-    //     canSelect = true;
-    //     decisionPanel->deleteLater();
-    //     decisionPanel = nullptr;
-    //     update();
-    //     return;
-    // }
-
     if (!canSelect) {
         emit closeOverlay();
     }
@@ -64,15 +55,9 @@ void ScreenshotSnipper::mouseReleaseEvent(QMouseEvent *event) {
         selectionRect = QRect(startPoint, event->pos()).normalized();
 
         if (selectionRect.width() == 1 || selectionRect.height() == 1) {
-            // selectionRect = QRect();
-            // canSelect = true;
-            // update();
             emit closeOverlay();
             return;
         }
-
-        QPixmap cropped = screenshot.copy(selectionRect);
-        QApplication::clipboard()->setPixmap(cropped);
 
         if (decisionPanel) {
             decisionPanel->deleteLater();
@@ -111,7 +96,9 @@ void ScreenshotSnipper::mouseReleaseEvent(QMouseEvent *event) {
 
         decisionPanel->move(this->mapFromGlobal(QPoint(startX, startY)));
 
-        connect(decisionPanel, &DecisionPanel::confirm, this, [this, cropped]() {
+        connect(decisionPanel, &DecisionPanel::confirm, this, [this]() {
+            QPixmap cropped = screenshot.copy(selectionRect);
+            QApplication::clipboard()->setPixmap(cropped);
             emit selectedArea(cropped);
             this->close();
         });

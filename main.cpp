@@ -15,12 +15,17 @@
 #include <QFutureWatcher>
 #include <qclipboard.h>
 
+#include "src/ocr/IOcrEngine.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow q;
 
-    TesseractOcrEngine ocr;
+    //TesseractOcrEngine ocr;
+
+    IOcrEngine* engine = new TesseractOcrEngine();
+    QObject::connect(engine, &TesseractOcrEngine::signal, &q, &MainWindow::setBlurTextEdit);
 
     SecretManager secrets;
 
@@ -28,9 +33,11 @@ int main(int argc, char *argv[])
 
     auto translator = new GeminiClient(geminiAPI, &a); //test
     QObject::connect(translator, &GeminiClient::translated, &q, &MainWindow::setTargetText);
+    //QObject::connect(translator, &GeminiClient::blurSignal, &q, &MainWindow::setBlurTextEdit_2);
 
-    QHotkey* hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a);
+    QHotkey* hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a); // unreal engine does not work
     QObject::connect(hotkey, &QHotkey::activated, [&]() {
+
         QScreen* screen = QGuiApplication::primaryScreen();
         if (!screen) return;
 
@@ -45,11 +52,12 @@ int main(int argc, char *argv[])
         snipper->show();
 
         QObject::connect(snipper, &ScreenshotSnipper::selectedArea, [&, overlay](const QPixmap &cropped) {
+            q.raise();
+            q.showNormal();
             QApplication::clipboard()->setPixmap(cropped);
             overlay->close();
-
-            auto future = QtConcurrent::run([&ocr]() {
-                return ocr.recognizeTextFromClipboard();
+            auto future = QtConcurrent::run([&engine, &q]() {
+                return engine->recognizeTextFromClipboard();
             });
 
             auto watcher = new QFutureWatcher<QString>();
@@ -59,16 +67,19 @@ int main(int argc, char *argv[])
                     qDebug() << "Recognized text:\n" << result;
                     q.setSourceText(result);
                     translator->translate(result, "en", "rus");
-                    q.show();
-                    q.raise();
-                    q.activateWindow();
-                    q.setFocus();
+                    if (q.getIsCollapsed()) {
+                        q.raise();
+                        q.showNormal();
+                    } else {
+                        q.show();
+                        q.activateWindow();
+                        q.setFocus();
+                    }
                 } else {
                     qDebug() << "No text recognized.";
                 }
                 watcher->deleteLater();
             });
-
             watcher->setFuture(future);
         });
     });

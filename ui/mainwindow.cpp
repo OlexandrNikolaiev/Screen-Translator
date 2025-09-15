@@ -3,6 +3,8 @@
 
 #include "CustomWidgets/trilabelbutton.h"
 #include <QClipboard>
+#include <QMovie>
+#include <QStackedLayout>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -44,7 +46,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->copy_1Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
     connect(ui->copy_2Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
 
+    //connect(ui->textEdit, &QTextEdit::textChanged, )
+    blur = new QGraphicsBlurEffect(this);
+    blur->setBlurRadius(9);
 
+    gifOverlay = new QLabel(ui->textEdit->parentWidget());
+    loadingSpinner = new QMovie(":/icons/resources/icons/spinner.gif");
 }
 
 void MainWindow::applyShadowEffect()
@@ -88,6 +95,57 @@ void MainWindow::setTargetText(QString text)
     ui->textEdit_2->setText(text);
 }
 
+void MainWindow::setBlurTextEdit(bool status)
+{
+    if (status)
+    {
+        ui->textEdit->setGraphicsEffect(blur);
+
+        gifOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
+        gifOverlay->setAttribute(Qt::WA_TranslucentBackground);
+        gifOverlay->setStyleSheet("background: transparent;");
+        gifOverlay->setFixedSize(64, 64);
+        gifOverlay->setScaledContents(true);
+        gifOverlay->setMovie(loadingSpinner);
+        gifOverlay->movie()->start();
+        gifOverlay->raise();
+        gifOverlay->show();
+
+        ui->textEdit->viewport()->installEventFilter(this);
+
+        positionOverlay();
+    } else {
+        ui->textEdit->setGraphicsEffect(nullptr);
+        gifOverlay->hide();
+        applyShadowEffect();
+    }
+}
+
+void MainWindow::setBlurTextEdit_2(bool status)
+{
+    if (status)
+    {
+        ui->textEdit_2->setGraphicsEffect(blur);
+
+        gifOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
+        gifOverlay->setAttribute(Qt::WA_TranslucentBackground);
+        gifOverlay->setStyleSheet("background: transparent;");
+        gifOverlay->setFixedSize(64, 64);
+        gifOverlay->setScaledContents(true);
+        gifOverlay->setMovie(loadingSpinner);
+        gifOverlay->movie()->start();
+        gifOverlay->raise();
+        gifOverlay->show();
+
+        ui->textEdit_2->viewport()->installEventFilter(this);
+
+        positionOverlay();
+    } else {
+        ui->textEdit_2->setGraphicsEffect(nullptr);
+        gifOverlay->hide();
+        applyShadowEffect();
+    }
+}
 
 bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, qint64 *result)
 {
@@ -164,10 +222,10 @@ void MainWindow::copyFromTextEdit()
     QApplication::clipboard()->setText(text);
 }
 
-
 void MainWindow::collapse()
 {
     this->showMinimized();
+    isCollapsed = true;
 }
 
 void MainWindow::clear()
@@ -176,5 +234,27 @@ void MainWindow::clear()
     ui->textEdit_2->clear();
 }
 
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == ui->textEdit->viewport() && event->type() == QEvent::Resize) {
+        positionOverlay();
+    }
+
+    return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::positionOverlay()
+{
+    QWidget* vp = ui->textEdit->viewport();
+    QPoint topLeft = vp->mapTo(ui->textEdit->parentWidget(), QPoint(0,0));
+    int x = topLeft.x() + (vp->width()  - gifOverlay->width())  / 2;
+    int y = topLeft.y() + (vp->height() - gifOverlay->height()) / 2;
+    gifOverlay->move(x, y);
+}
+
+void MainWindow::on_translateButton_clicked()
+{
+
+}
 
 

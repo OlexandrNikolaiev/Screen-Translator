@@ -5,7 +5,7 @@
 TesseractOcrEngine::TesseractOcrEngine()
 {
     tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-    if (api->Init("assets\\tessdata\\", "eng")) {
+    if (api->Init("assets\\tessdata\\", "eng")) { // move to another function
         qWarning() << "Error while initializing Tesseract";
         delete api;
         _ocrApi = nullptr;
@@ -68,6 +68,7 @@ Pix* TesseractOcrEngine::HBitmapToPix(HBITMAP hBitmap)
 
 QString TesseractOcrEngine::recognizeTextFromClipboard()
 {
+    emit signal(true);
     if (!_ocrApi) {
         qWarning() << "Tesseract API is not initizalized.";
         return QString();
@@ -102,5 +103,6 @@ QString TesseractOcrEngine::recognizeTextFromClipboard()
     delete[] text;
     pixDestroy(&image);
 
+    emit signal(false);
     return result;
 }

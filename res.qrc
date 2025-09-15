@@ -14,5 +14,6 @@
         <file>resources/icons/ok_hover.png</file>
         <file>resources/icons/cancel.png</file>
         <file>resources/icons/retry.png</file>
+        <file>resources/icons/spinner.gif</file>
     </qresource>
 </RCC>

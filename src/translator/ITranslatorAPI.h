@@ -3,7 +3,7 @@
 
 #include <QString>
 
-class ITranslatorAPI
+class ITranslatorAPI // сделать гет инстанс, при смене комбобокса занулять поинтер на транслятор и инициализировать его другим транслятором
 {
 public:
     virtual ~ITranslatorAPI() {}
