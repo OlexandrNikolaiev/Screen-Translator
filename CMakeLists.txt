@@ -31,6 +31,9 @@ qt_add_executable(ScreenTranslator
     ui/CustomWidgets/decisionpanel.h ui/CustomWidgets/decisionpanel.cpp ui/CustomWidgets/decisionpanel.ui
     src/utils/enums/enums.h
     ui/settings.ui
+    ui/CustomWidgets/slidingstackedwidget.h ui/CustomWidgets/slidingstackedwidget.cpp
+    ui/CustomWidgets/backbutton.h ui/CustomWidgets/backbutton.cpp
+
 
 
 )

@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->closeButton, &QPushButton::clicked, this, &MainWindow::closeWindow);
     connect(ui->collapseButton, &QPushButton::clicked, this, &MainWindow::collapse);
+    connect(ui->closeButtonSettings, &QPushButton::clicked, this, &MainWindow::closeWindow);
+    connect(ui->collapseButtonSettings, &QPushButton::clicked, this, &MainWindow::collapse);
+
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::clear);
     mBorderSize = 10;
 
@@ -46,12 +49,24 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->copy_1Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
     connect(ui->copy_2Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
 
-    //connect(ui->textEdit, &QTextEdit::textChanged, )
+    connect(ui->settingsButton, &QPushButton::clicked, this, [this] {
+        if(ui->stackedWidget->slideInNext()){
+
+        }
+    });
+    connect(ui->backButton, &QPushButton::clicked, this, [this] {
+        if(ui->stackedWidget->slideInPrev()){
+
+        }
+    });
+
     blur = new QGraphicsBlurEffect(this);
     blur->setBlurRadius(9);
 
     gifOverlay = new QLabel(ui->textEdit->parentWidget());
     loadingSpinner = new QMovie(":/icons/resources/icons/spinner.gif");
+
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 void MainWindow::applyShadowEffect()
@@ -64,7 +79,8 @@ void MainWindow::applyShadowEffect()
         return shadow;
     };
 
-    ui->shadowFrame->setGraphicsEffect(makeShadow());
+    ui->stackedWidget->setGraphicsEffect(makeShadow());
+    //ui->shadowFrame->setGraphicsEffect(makeShadow());
     ui->textEdit->setGraphicsEffect(makeShadow());
     ui->textEdit_2->setGraphicsEffect(makeShadow());
 
@@ -93,6 +109,11 @@ void MainWindow::setSourceText(QString text)
 void MainWindow::setTargetText(QString text)
 {
     ui->textEdit_2->setText(text);
+}
+
+void MainWindow::setStackedWidgetIndex(int i)
+{
+    ui->stackedWidget->setCurrentIndex(i);
 }
 
 void MainWindow::setBlurTextEdit(bool status)

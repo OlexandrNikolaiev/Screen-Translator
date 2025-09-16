@@ -109,6 +109,7 @@ void OverlayWidget::paintEvent(QPaintEvent *)
 
 void OverlayWidget::smoothClose() // todo: close snipper before overlay
 {
+    qDebug()<<"smoothClose";
     QPropertyAnimation *anim = new QPropertyAnimation(this, "vignetteStrength");
     anim->setDuration(100);
     anim->setStartValue(m_vignetteStrength);

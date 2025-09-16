@@ -34,10 +34,12 @@ public:
     void setTargetText(QString text);
 
     bool getIsCollapsed() {return isCollapsed;}
+    void setStackedWidgetIndex(int i);
 
 public slots:
     void setBlurTextEdit(bool status);
     void setBlurTextEdit_2(bool status);
+
 
 protected:
     bool nativeEvent(const QByteArray &eventType, void *message, qint64 *result) override;

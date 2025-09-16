@@ -50,18 +50,23 @@ int main(int argc, char *argv[])
         snipper->setParent(overlay);
         snipper->resize(overlay->size());
         snipper->show();
+        qDebug()<<"vezuviy";
 
         QObject::connect(snipper, &ScreenshotSnipper::selectedArea, [&, overlay](const QPixmap &cropped) {
+            //q.setStackedWidgetIndex(0);
             q.raise();
             q.showNormal();
             QApplication::clipboard()->setPixmap(cropped);
             overlay->close();
             auto future = QtConcurrent::run([&engine, &q]() {
+                qDebug()<<"11111111111";
                 return engine->recognizeTextFromClipboard();
             });
 
             auto watcher = new QFutureWatcher<QString>();
+            qDebug()<<"222";
             QObject::connect(watcher, &QFutureWatcher<QString>::finished, [watcher, &q, translator]() {
+                qDebug()<<"333";
                 QString result = watcher->result();
                 if (!result.isEmpty()) {
                     qDebug() << "Recognized text:\n" << result;
