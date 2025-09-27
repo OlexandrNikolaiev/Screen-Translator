@@ -68,7 +68,7 @@ Pix* TesseractOcrEngine::HBitmapToPix(HBITMAP hBitmap)
 
 QString TesseractOcrEngine::recognizeTextFromClipboard()
 {
-    emit signal(true);
+    emit blurSignal(true);
     if (!_ocrApi) {
         qWarning() << "Tesseract API is not initizalized.";
         return QString();
@@ -103,6 +103,6 @@ QString TesseractOcrEngine::recognizeTextFromClipboard()
     delete[] text;
     pixDestroy(&image);
 
-    emit signal(false);
+    emit blurSignal(false);
     return result;
 }

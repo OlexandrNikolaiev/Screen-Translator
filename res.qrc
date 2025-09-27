@@ -18,4 +18,7 @@
         <file>resources/icons/back.png</file>
         <file>resources/icons/back_hover.png</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file>resources/fonts/SFPRODISPLAYMEDIUM.OTF</file>
+    </qresource>
 </RCC>

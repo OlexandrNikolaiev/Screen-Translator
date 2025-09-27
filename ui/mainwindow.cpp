@@ -60,11 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    blur = new QGraphicsBlurEffect(this);
-    blur->setBlurRadius(9);
-
-    gifOverlay = new QLabel(ui->textEdit->parentWidget());
-    loadingSpinner = new QMovie(":/icons/resources/icons/spinner.gif");
+    gifOverlay = new QLabel(this);
+    loadingSpinner = new QMovie(":/icons/resources/icons/spinner.gif", QByteArray(), this);
 
     ui->stackedWidget->setCurrentIndex(0);
 }
@@ -118,8 +115,12 @@ void MainWindow::setStackedWidgetIndex(int i)
 
 void MainWindow::setBlurTextEdit(bool status)
 {
+    gifOverlay->setParent(ui->textEdit->parentWidget());
     if (status)
     {
+        auto blur = new QGraphicsBlurEffect(ui->textEdit);
+
+        blur->setBlurRadius(6);
         ui->textEdit->setGraphicsEffect(blur);
 
         gifOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -144,8 +145,11 @@ void MainWindow::setBlurTextEdit(bool status)
 
 void MainWindow::setBlurTextEdit_2(bool status)
 {
+    gifOverlay->setParent(ui->textEdit_2->parentWidget());
     if (status)
     {
+        auto blur = new QGraphicsBlurEffect(ui->textEdit_2);
+        blur->setBlurRadius(6);
         ui->textEdit_2->setGraphicsEffect(blur);
 
         gifOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);

@@ -14,7 +14,7 @@ public:
     // recognizeTextFromFile
 
 signals:
-    void signal(bool status);
+    void blurSignal(bool status);
 };
 
 #endif // IOCR_ENGINE_H

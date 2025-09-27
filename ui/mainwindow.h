@@ -63,7 +63,6 @@ private:
 
     bool isCollapsed = false;
 
-    QGraphicsBlurEffect* blur;
     QLabel* gifOverlay;
     QMovie* loadingSpinner;
 

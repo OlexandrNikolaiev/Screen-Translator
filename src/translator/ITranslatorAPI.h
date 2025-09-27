@@ -1,10 +1,12 @@
 #ifndef ITRANSLATORAPI_H
 #define ITRANSLATORAPI_H
 
+#include <QObject>
 #include <QString>
 
-class ITranslatorAPI // сделать гет инстанс, при смене комбобокса занулять поинтер на транслятор и инициализировать его другим транслятором
+class ITranslatorAPI : public QObject // сделать гет инстанс, при смене комбобокса занулять поинтер на транслятор и инициализировать его другим транслятором
 {
+    Q_OBJECT
 public:
     virtual ~ITranslatorAPI() {}
     virtual void sendMessage(const QString &userMessage) = 0;
@@ -14,6 +16,10 @@ public:
         return {};
     }
     virtual QObject* qobject() = 0;
+
+signals:
+    void translated(QString);
+    void blurSignal(bool status);
 };
 
 #endif // ITRANSLATORAPI_H

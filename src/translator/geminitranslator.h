@@ -5,20 +5,17 @@
 
 #include <QNetworkReply>
 
-class GeminiClient : public QObject, public ITranslatorAPI
+class GeminiClient : public ITranslatorAPI
 {
     Q_OBJECT
 public:
-    GeminiClient(const QString& apiKey, QObject* parent = nullptr);
+    GeminiClient(const QString& apiKey);
     void translate(const QString& text, const QString& sourceLang, const QString& targetLang) override;
 
-    QObject* qobject() override { return this; }
+    QObject* qobject() override { return this->qobject(); }
 
 private slots:
     void onReplyFinished(QNetworkReply* reply);
-
-signals:
-    void translated(QString);
 
 private:
     void sendMessage(const QString& userMessage) override;

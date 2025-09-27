@@ -6,8 +6,8 @@
 #include <QJsonDocument>
 
 
-GeminiClient::GeminiClient(const QString& apiKey, QObject* parent)
-    : _apiKey(apiKey), QObject(parent)
+GeminiClient::GeminiClient(const QString& apiKey)
+    : _apiKey(apiKey)
 {
     connect(&_manager, &QNetworkAccessManager::finished, this, &GeminiClient::onReplyFinished);
 }
@@ -20,6 +20,7 @@ void GeminiClient::translate(const QString& text, const QString& sourceLang, con
 
 void GeminiClient::sendMessage(const QString& userMessage)
 {
+    emit blurSignal(true);
     QUrl url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + _apiKey);
     QNetworkRequest request(url);
 
@@ -63,6 +64,7 @@ void GeminiClient::onReplyFinished(QNetworkReply* reply)
                     QJsonObject textPart = parts[0].toObject();
                     QString answer = textPart["text"].toString();
                     emit translated(answer);
+                    emit blurSignal(false);
                     qDebug() << "Gemini response:" << answer;
                 } else {
                     qDebug() << "No parts in response";

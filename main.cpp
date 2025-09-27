@@ -14,6 +14,7 @@
 #include <QtConcurrent>
 #include <QFutureWatcher>
 #include <qclipboard.h>
+#include <QFontDatabase>
 
 #include "src/ocr/IOcrEngine.h"
 
@@ -22,18 +23,28 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow q;
 
-    //TesseractOcrEngine ocr;
+    int id = QFontDatabase::addApplicationFont(":/fonts/resources/fonts/SFPRODISPLAYMEDIUM.OTF");
+    QString family;
+    QStringList families = QFontDatabase::applicationFontFamilies(id);
+    if (!families.isEmpty()) {
+        family = families.at(0);
+        QFont appFont(family, 17);
+        QApplication::setFont(appFont);
+    } else {
+        qDebug() << "Font not loaded, using default";
+    }
+
 
     IOcrEngine* engine = new TesseractOcrEngine();
-    QObject::connect(engine, &TesseractOcrEngine::signal, &q, &MainWindow::setBlurTextEdit);
+    QObject::connect(engine, &TesseractOcrEngine::blurSignal, &q, &MainWindow::setBlurTextEdit);
 
     SecretManager secrets;
 
     QString geminiAPI = secrets.getApiKey("GEMINI");
 
-    auto translator = new GeminiClient(geminiAPI, &a); //test
+    ITranslatorAPI* translator = new GeminiClient(geminiAPI); //test
     QObject::connect(translator, &GeminiClient::translated, &q, &MainWindow::setTargetText);
-    //QObject::connect(translator, &GeminiClient::blurSignal, &q, &MainWindow::setBlurTextEdit_2);
+    QObject::connect(translator, &GeminiClient::blurSignal, &q, &MainWindow::setBlurTextEdit_2);
 
     QHotkey* hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a); // unreal engine does not work
     QObject::connect(hotkey, &QHotkey::activated, [&]() {
