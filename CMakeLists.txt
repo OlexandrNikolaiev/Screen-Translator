@@ -33,6 +33,8 @@ qt_add_executable(ScreenTranslator
     ui/settings.ui
     ui/CustomWidgets/slidingstackedwidget.h ui/CustomWidgets/slidingstackedwidget.cpp
     ui/CustomWidgets/backbutton.h ui/CustomWidgets/backbutton.cpp
+    src/utils/ClipboardManager/clipboardmanager.h src/utils/ClipboardManager/clipboardmanager.cpp
+    src/utils/ClipboardManager/IClipboardService.h
 
 
 

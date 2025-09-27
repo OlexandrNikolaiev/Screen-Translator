@@ -9,7 +9,7 @@
 #include <QRadialGradient>
 #include <QScreen>
 #include <QPainterPath>
-
+#include <QMimeData>
 
 ScreenshotSnipper::ScreenshotSnipper(const QPixmap &pixmap)
     : QWidget(nullptr), screenshot(pixmap) {qDebug()<<"snipper constructor";}
@@ -97,6 +97,22 @@ void ScreenshotSnipper::mouseReleaseEvent(QMouseEvent *event) {
         decisionPanel->move(this->mapFromGlobal(QPoint(startX, startY)));
 
         connect(decisionPanel, &DecisionPanel::confirm, this, [this]() {
+            // QClipboard *clipboard = QApplication::clipboard();
+
+            // const QMimeData *originalData = clipboard->mimeData();
+            // QMimeData *backup = new QMimeData();
+
+            // for (const QString &format : originalData->formats()) {
+            //     backup->setData(format, originalData->data(format));
+            // }
+
+            // QPixmap cropped = screenshot.copy(selectionRect);
+            // QApplication::clipboard()->setPixmap(cropped);
+            // emit selectedArea(cropped);
+
+            // clipboard->setMimeData(backup);
+
+            // this->close();
             QPixmap cropped = screenshot.copy(selectionRect);
             QApplication::clipboard()->setPixmap(cropped);
             emit selectedArea(cropped);

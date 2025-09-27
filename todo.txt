@@ -1,3 +1,3 @@
-do not override user's clipboard after use of translator (reserve user's clipboard)
 change switch section to abbreviations iso 639
 tray
+error 503 handling

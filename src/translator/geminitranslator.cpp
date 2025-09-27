@@ -80,7 +80,6 @@ void GeminiClient::onReplyFinished(QNetworkReply* reply)
         qDebug() << "HTTP status code:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         qDebug() << "Error:" << reply->error() << reply->errorString();
         qDebug() << "Response body:" << reply->readAll();
-
     }
 
     reply->deleteLater();

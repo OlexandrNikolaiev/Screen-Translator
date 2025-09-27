@@ -5,6 +5,7 @@
 #include "src/ocr/TesseractOcrEngine.h"
 #include "src/translator/geminitranslator.h"
 #include "src/utils/SecretManager/secretmanager.h"
+#include "src/utils/ClipboardManager/clipboardmanager.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -63,11 +64,12 @@ int main(int argc, char *argv[])
         snipper->show();
         qDebug()<<"vezuviy";
 
+        ClipboardManager::instance().backup();
         QObject::connect(snipper, &ScreenshotSnipper::selectedArea, [&, overlay](const QPixmap &cropped) {
             //q.setStackedWidgetIndex(0);
             q.raise();
             q.showNormal();
-            QApplication::clipboard()->setPixmap(cropped);
+            //QApplication::clipboard()->setPixmap(cropped);
             overlay->close();
             auto future = QtConcurrent::run([&engine, &q]() {
                 qDebug()<<"11111111111";
@@ -94,6 +96,7 @@ int main(int argc, char *argv[])
                 } else {
                     qDebug() << "No text recognized.";
                 }
+                ClipboardManager::instance().restore();
                 watcher->deleteLater();
             });
             watcher->setFuture(future);
