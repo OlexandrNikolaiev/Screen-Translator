@@ -31,7 +31,7 @@
     <item row="0" column="0">
      <widget class="SlidingStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1228,7 +1228,28 @@ QPushButton:hover
              </property>
              <layout class="QGridLayout" name="gridLayout_8">
               <item row="0" column="1">
-               <widget class="QComboBox" name="comboBox"/>
+               <widget class="QComboBox" name="comboBox">
+                <property name="font">
+                 <font>
+                  <family>Calibri</family>
+                  <pointsize>14</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(255, 255, 255);</string>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Tesseract</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Paddle OCR</string>
+                 </property>
+                </item>
+               </widget>
               </item>
               <item row="0" column="0">
                <widget class="QLabel" name="label_5">
@@ -1238,6 +1259,9 @@ QPushButton:hover
                   <pointsize>14</pointsize>
                   <bold>true</bold>
                  </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="text">
                  <string>Optical Character Recognition</string>
@@ -1287,7 +1311,7 @@ QPushButton:hover
   <customwidget>
    <class>DraggableFrame</class>
    <extends>QFrame</extends>
-   <header>CustomWidgets/draggableframe.h</header>
+   <header>E:\qt_projects\BJGUI\src\presentation\CustomWidgets\DraggableQFrame\draggableframe.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

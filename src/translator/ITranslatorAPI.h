@@ -20,6 +20,8 @@ public:
 signals:
     void translated(QString);
     void blurSignal(bool status);
+    void languageDetected(QString); // tells UI the exact language
+    void sourceTextCleaned(QString); // gives back corrected text
 };
 
 #endif // ITRANSLATORAPI_H

@@ -44,8 +44,24 @@ int main(int argc, char *argv[])
     QString geminiAPI = secrets.getApiKey("GEMINI");
 
     ITranslatorAPI* translator = new GeminiClient(geminiAPI); //test
-    QObject::connect(translator, &GeminiClient::translated, &q, &MainWindow::setTargetText);
     QObject::connect(translator, &GeminiClient::blurSignal, &q, &MainWindow::setBlurTextEdit_2);
+    QObject::connect(translator, &GeminiClient::translated, &q, &MainWindow::setTargetText);
+    QObject::connect(translator, &ITranslatorAPI::languageDetected, &q, &MainWindow::setDetectedLanguageUI);
+    QObject::connect(translator, &ITranslatorAPI::sourceTextCleaned, &q, &MainWindow::setSourceText);
+
+    QObject::connect(&q, &MainWindow::swapRequested, [&q, translator]() {
+        QString currentSrcText = q.getSourceText();
+        if (!currentSrcText.isEmpty()) {
+            translator->translate(currentSrcText, q.getSourceLanguage(), q.getTargetLanguage());
+        }
+    });
+
+    QObject::connect(&q, &MainWindow::retranslateRequested, [&q, translator]() {
+        QString currentSrcText = q.getSourceText();
+        if (!currentSrcText.isEmpty()) {
+            translator->translate(currentSrcText, q.getSourceLanguage(), q.getTargetLanguage());
+        }
+    });
 
     QHotkey* hotkey = new QHotkey(QKeySequence("Alt+Shift+S"), true, &a); // unreal engine does not work
     QObject::connect(hotkey, &QHotkey::activated, [&]() {
@@ -70,6 +86,7 @@ int main(int argc, char *argv[])
             q.raise();
             q.showNormal();
             //QApplication::clipboard()->setPixmap(cropped);
+
             overlay->close();
             auto future = QtConcurrent::run([&engine, &q]() {
                 qDebug()<<"11111111111";
@@ -84,7 +101,7 @@ int main(int argc, char *argv[])
                 if (!result.isEmpty()) {
                     qDebug() << "Recognized text:\n" << result;
                     q.setSourceText(result);
-                    translator->translate(result, "en", "rus");
+                    translator->translate(result, q.getSourceLanguage(), q.getTargetLanguage());
                     if (q.getIsCollapsed()) {
                         q.raise();
                         q.showNormal();

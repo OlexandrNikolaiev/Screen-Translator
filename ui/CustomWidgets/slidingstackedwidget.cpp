@@ -196,7 +196,6 @@ void SlidingStackedWidget::slideInWgt(QWidget * newwidget, enum t_direction dire
     animgroup->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-
 void SlidingStackedWidget::animationDoneSlot()
 {
     setCurrentIndex(m_next);

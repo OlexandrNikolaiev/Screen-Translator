@@ -33,18 +33,66 @@ MainWindow::MainWindow(QWidget *parent)
         "Turkish", "Arabic", "Hebrew", "Chinese (Simplified)", "Chinese (Traditional)", "Japanese", "Korean",
         "Hindi","Bengali", "Urdu", "Thai", "Vietnamese", "Indonesian", "Malay", "Filipino", "Swahili", "Zulu"
     };
+    QStringList languages2 = {
+        "Spanish", "Russian", "Ukrainian", "Polish", "German", "Belarussian", "Italian", "French", "Spanish",
+        "Portuguese","Dutch",
+        "Swedish", "Norwegian", "Finnish", "Danish", "Czech", "Slovak", "Hungarian", "Romanian", "Greek",
+        "Turkish", "Arabic", "Hebrew", "Chinese (Simplified)", "Chinese (Traditional)", "Japanese", "Korean",
+        "Hindi","Bengali", "Urdu", "Thai", "Vietnamese", "Indonesian", "Malay", "Filipino", "Swahili", "Zulu"
+    };
 
-    TriLabelButton *triBtn = new TriLabelButton(this);
-    triBtn->setLeftText("Belarussian");
-    triBtn->setRightText("English");
-    triBtn->setPixmap(QPixmap(":/icons/resources/icons/swap.png"));
-    connect(triBtn, &TriLabelButton::clicked, this, [triBtn]() {
-        triBtn->swap();
-    });
-    ui->horizontalLayout_4->addWidget(triBtn);
+    // TriLabelButton *triBtn = new TriLabelButton(this);
+    // triBtn->setLeftText("English");
+    // triBtn->setRightText("Spanish");
+    // triBtn->setPixmap(QPixmap(":/icons/resources/icons/swap.png"));
+    // connect(triBtn, &TriLabelButton::clicked, this, [triBtn]() {
+    //     triBtn->swap();
+    // });
+    // ui->horizontalLayout_4->addWidget(triBtn);
+
+    m_triBtn = new TriLabelButton(this);
+    m_triBtn->setPixmap(QPixmap(":/icons/resources/icons/swap.png"));
+    ui->horizontalLayout_4->addWidget(m_triBtn);
 
     ui->translateFrom->addItems(languages);
-    ui->translateTo->addItems(languages);
+    ui->translateTo->addItems(languages2);
+
+    ui->translateFrom->insertItem(0, "Auto Detect");
+
+    ui->translateFrom->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    ui->translateTo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    ui->translateFrom->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    ui->translateTo->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+    connect(ui->translateFrom, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        if (m_triBtn) m_triBtn->setLeftText(text);
+    });
+    connect(ui->translateTo, &QComboBox::currentTextChanged, this, [this](const QString &text) {
+        if (m_triBtn) m_triBtn->setRightText(text);
+    });
+
+    ui->translateFrom->setCurrentText("Auto Detect");
+    ui->translateTo->setCurrentText("Ukrainian");
+
+    // connect(m_triBtn, &TriLabelButton::clicked, this, [this]() {
+    //     QString temp = ui->translateFrom->currentText();
+    //     ui->translateFrom->setCurrentText(ui->translateTo->currentText());
+    //     ui->translateTo->setCurrentText(temp);
+    // });
+
+    connect(ui->translateFrom, QOverload<int>::of(&QComboBox::activated), this, [this](int /*index*/) {
+        ui->translateFrom->setItemText(0, "Auto Detect");
+
+        if (ui->translateFrom->currentIndex() == 0 && m_triBtn) {
+            m_triBtn->setLeftText("Auto Detect");
+        }
+    });
+
+    connect(ui->translateTo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int /*index*/) {
+        emit retranslateRequested();
+    });
+
+    connect(m_triBtn, &TriLabelButton::clicked, this, &MainWindow::handleSwap);
 
     connect(ui->copy_1Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
     connect(ui->copy_2Button, &QPushButton::clicked, this, &MainWindow::copyFromTextEdit);
@@ -58,6 +106,10 @@ MainWindow::MainWindow(QWidget *parent)
         if(ui->stackedWidget->slideInPrev()){
 
         }
+    });
+
+    connect(ui->translateButton, &QPushButton::clicked, this, [this] {
+        emit retranslateRequested();
     });
 
     gifOverlay = new QLabel(this);
@@ -111,6 +163,47 @@ void MainWindow::setTargetText(QString text)
 void MainWindow::setStackedWidgetIndex(int i)
 {
     ui->stackedWidget->setCurrentIndex(i);
+}
+
+void MainWindow::setDetectedLanguageUI(const QString& lang)
+{
+    QString cleanLang = lang.trimmed();
+
+    if (ui->translateFrom->currentIndex() == 0) {
+        QString autoText = "Auto Detect (" + cleanLang + ")";
+        ui->translateFrom->setItemText(0, autoText);
+        if (m_triBtn) {
+            m_triBtn->setLeftText(autoText);
+        }
+    }
+    else {
+        if (ui->translateFrom->currentText().compare(cleanLang, Qt::CaseInsensitive) != 0) {
+
+            int index = -1;
+            for (int i = 0; i < ui->translateFrom->count(); ++i) {
+                if (ui->translateFrom->itemText(i).compare(cleanLang, Qt::CaseInsensitive) == 0) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index != -1) {
+                ui->translateFrom->setCurrentIndex(index);
+            }
+        }
+    }
+}
+
+QString MainWindow::getSourceLanguage() const {
+    return ui->translateFrom->currentText();
+}
+
+QString MainWindow::getTargetLanguage() const {
+    return ui->translateTo->currentText();
+}
+
+QString MainWindow::getSourceText() const {
+    return ui->textEdit->toPlainText();
 }
 
 void MainWindow::setBlurTextEdit(bool status)
@@ -277,9 +370,59 @@ void MainWindow::positionOverlay()
     gifOverlay->move(x, y);
 }
 
-void MainWindow::on_translateButton_clicked()
+void MainWindow::handleSwap()
 {
+    QString origText = ui->textEdit->toPlainText();
+    QString transText = ui->textEdit_2->toPlainText();
 
+    if (transText.isEmpty()) return;
+
+    ui->textEdit->setText(transText);
+    ui->textEdit_2->clear();
+
+    QString fromLang = ui->translateFrom->currentText();
+    QString toLang = ui->translateTo->currentText();
+
+    if (fromLang.startsWith("Auto Detect (") && fromLang.endsWith(")")) {
+        fromLang = fromLang.mid(13, fromLang.length() - 14);
+    }
+    else if (fromLang == "Auto Detect") {
+        fromLang = "English";
+    }
+
+    ui->translateFrom->setItemText(0, "Auto Detect");
+
+    ui->translateFrom->blockSignals(true);
+    ui->translateTo->blockSignals(true);
+
+    int fromIdx = -1;
+    for (int i = 0; i < ui->translateFrom->count(); ++i) {
+        if (ui->translateFrom->itemText(i).compare(toLang, Qt::CaseInsensitive) == 0) {
+            fromIdx = i;
+            break;
+        }
+    }
+
+    int toIdx = -1;
+    for (int i = 0; i < ui->translateTo->count(); ++i) {
+        if (ui->translateTo->itemText(i).compare(fromLang, Qt::CaseInsensitive) == 0) {
+            toIdx = i;
+            break;
+        }
+    }
+
+    if (fromIdx != -1) ui->translateFrom->setCurrentIndex(fromIdx);
+    if (toIdx != -1) ui->translateTo->setCurrentIndex(toIdx);
+
+    ui->translateFrom->blockSignals(false);
+    ui->translateTo->blockSignals(false);
+
+    if (m_triBtn) {
+        m_triBtn->setLeftText(ui->translateFrom->currentText());
+        m_triBtn->setRightText(ui->translateTo->currentText());
+    }
+
+    emit swapRequested();
 }
 
 

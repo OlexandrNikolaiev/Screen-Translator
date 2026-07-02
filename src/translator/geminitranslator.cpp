@@ -14,14 +14,21 @@ GeminiClient::GeminiClient(const QString& apiKey)
 
 void GeminiClient::translate(const QString& text, const QString& sourceLang, const QString& targetLang)
 {
-    QString promptText = Prompt::defaultPromptTemplate().arg(sourceLang, targetLang, text);
+    QString promptText;
+
+    if (sourceLang.startsWith("Auto Detect")) {
+        promptText = Prompt::autoDetectPromptTemplate().arg(targetLang, text);
+    } else {
+        promptText = Prompt::defaultPromptTemplate().arg(sourceLang, targetLang, text);
+    }
+
     sendMessage(promptText);
 }
 
 void GeminiClient::sendMessage(const QString& userMessage)
 {
     emit blurSignal(true);
-    QUrl url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + _apiKey);
+    QUrl url("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=" + _apiKey);
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -62,8 +69,30 @@ void GeminiClient::onReplyFinished(QNetworkReply* reply)
                 QJsonArray parts = content["parts"].toArray();
                 if (!parts.isEmpty()) {
                     QJsonObject textPart = parts[0].toObject();
+
                     QString answer = textPart["text"].toString();
-                    emit translated(answer);
+                    answer.remove("```json");
+                    answer.remove("```");
+                    answer = answer.trimmed();
+
+                    QJsonParseError parseError;
+                    QJsonDocument doc = QJsonDocument::fromJson(answer.toUtf8(), &parseError);
+
+                    if (parseError.error == QJsonParseError::NoError && doc.isObject()) {
+                        QJsonObject jsonObj = doc.object();
+
+                        QString detectedLang = jsonObj["detected_language"].toString();
+                        QString cleanedText = jsonObj["cleaned_text"].toString();
+                        QString translation = jsonObj["translation"].toString();
+
+                        emit languageDetected(detectedLang);
+                        emit sourceTextCleaned(cleanedText);
+                        emit translated(translation);
+
+                    } else {
+                        emit translated(answer);
+                    }
+
                     emit blurSignal(false);
                     qDebug() << "Gemini response:" << answer;
                 } else {

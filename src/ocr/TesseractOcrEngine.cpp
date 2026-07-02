@@ -5,7 +5,7 @@
 TesseractOcrEngine::TesseractOcrEngine()
 {
     tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-    if (api->Init("assets\\tessdata\\", "eng")) { // move to another function
+    if (api->Init("assets\\tessdata\\", "eng+rus+ukr")) { // move to another function
         qWarning() << "Error while initializing Tesseract";
         delete api;
         _ocrApi = nullptr;
@@ -97,6 +97,7 @@ QString TesseractOcrEngine::recognizeTextFromClipboard()
     tesseract::TessBaseAPI* api = static_cast<tesseract::TessBaseAPI*>(_ocrApi);
     api->SetImage(image);
     char* text = api->GetUTF8Text();
+    int confidence = api->MeanTextConf();
 
     QString result = QString::fromUtf8(text);
 

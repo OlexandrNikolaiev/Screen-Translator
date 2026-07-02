@@ -13,6 +13,7 @@
 #include <QTextEdit>
 
 #include "../src/utils/enums/enums.h"
+#include "CustomWidgets/trilabelbutton.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,10 +37,20 @@ public:
     bool getIsCollapsed() {return isCollapsed;}
     void setStackedWidgetIndex(int i);
 
+    void setDetectedLanguageUI(const QString& lang);
+
+    QString getSourceLanguage() const;
+    QString getTargetLanguage() const;
+
+    QString getSourceText() const;
+
 public slots:
     void setBlurTextEdit(bool status);
     void setBlurTextEdit_2(bool status);
 
+signals:
+    void swapRequested();
+    void retranslateRequested();
 
 protected:
     bool nativeEvent(const QByteArray &eventType, void *message, qint64 *result) override;
@@ -47,7 +58,7 @@ protected:
 
 private slots:
     void copyFromTextEdit();
-    void on_translateButton_clicked();
+    void handleSwap();
 
 private:
     bool isTranslated = false;
@@ -66,6 +77,7 @@ private:
     QLabel* gifOverlay;
     QMovie* loadingSpinner;
 
+    TriLabelButton* m_triBtn;
 };
 
 #endif // MAINWINDOW_H
