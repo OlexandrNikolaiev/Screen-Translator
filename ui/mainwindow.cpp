@@ -116,6 +116,8 @@ MainWindow::MainWindow(QWidget *parent)
     loadingSpinner = new QMovie(":/icons/resources/icons/spinner.gif", QByteArray(), this);
 
     ui->stackedWidget->setCurrentIndex(0);
+
+    ui->textEdit->installEventFilter(this);
 }
 
 void MainWindow::applyShadowEffect()
@@ -153,6 +155,10 @@ void MainWindow::closeWindow()
 void MainWindow::setSourceText(QString text)
 {
     ui->textEdit->setText(text);
+
+    QTextCursor cursor = ui->textEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    ui->textEdit->setTextCursor(cursor);
 }
 
 void MainWindow::setTargetText(QString text)
@@ -356,6 +362,21 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == ui->textEdit->viewport() && event->type() == QEvent::Resize) {
         positionOverlay();
+    }
+
+    if (watched == ui->textEdit && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+
+        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+
+            if (keyEvent->modifiers() & Qt::ShiftModifier) {
+                return QMainWindow::eventFilter(watched, event);
+            }
+            else {
+                emit retranslateRequested();
+                return true;
+            }
+        }
     }
 
     return QMainWindow::eventFilter(watched, event);
